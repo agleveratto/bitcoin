@@ -1,4 +1,4 @@
-package com.example.winance.response;
+package com.agleveratto.bitcoin.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

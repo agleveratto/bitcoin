@@ -1,41 +1,38 @@
-package com.example.winance.utils;
+package com.agleveratto.bitcoin.utils;
 
-import com.example.winance.entities.Bitcoin;
+import com.agleveratto.bitcoin.entities.Bitcoin;
 import lombok.extern.slf4j.Slf4j;
-import org.reactivestreams.Publisher;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.math.MathFlux;
+
+import java.util.Comparator;
+import java.util.List;
 
 @Slf4j
 public class BitcoinUtils {
 
     /**
-     * Get average value given a Flux<Bitcoin>
+     * Get average value given a List<Bitcoin>
      *
-     * @param bitcoinFlux Flux to analyze
+     * @param bitcoinList List to analyze
      * @return averageValue
      */
-    public Double getAverageValue(Flux<Bitcoin> bitcoinFlux){
-        Mono<Double> averageValueMono = MathFlux.averageDouble(getPublisherByFlux(bitcoinFlux));
-        Double[] averagePrice = {0.0};
-        averageValueMono.subscribe(value -> averagePrice[0] =+Double.parseDouble(String.format("%.02f",value)));
-        log.info("average price -> " + averagePrice[0]);
-        return averagePrice[0];
+    public Double getAverageValue(List<Bitcoin> bitcoinList){
+        final Double[] totalValue = {0.0};
+        bitcoinList.forEach(bitcoin -> totalValue[0] =+ bitcoin.getLprice());
+        Double averageValue = totalValue[0] / Double.parseDouble(String.valueOf(bitcoinList.size()));
+        log.info("average price -> {}", averageValue);
+        return averageValue;
     }
 
     /**
      * Get max value given a Flux<Bitcoin>
      *
-     * @param bitcoinFlux Flux to analyze
+     * @param bitcoinList Flux to analyze
      * @return maxValue
      */
-    public Double getMaxValue(Flux<Bitcoin> bitcoinFlux){
-        Mono<Double> maxValueMono = MathFlux.max(getPublisherByFlux(bitcoinFlux));
-        Double[] maxPrice = {0.0};
-        maxValueMono.subscribe(value -> maxPrice[0] =+ Double.parseDouble(String.format("%.02f",value)));
-        log.info("max price -> " + maxPrice[0]);
-        return maxPrice[0];
+    public Double getMaxValue(List<Bitcoin> bitcoinList){
+        Double maxValue = bitcoinList.stream().max(Comparator.comparing(Bitcoin::getLprice)).get().getLprice();
+        log.info("max price -> {}", maxValue);
+        return maxValue;
 
     }
 
@@ -49,21 +46,11 @@ public class BitcoinUtils {
      * the percentage differential value equals 100 and this is wrong, so for the math operation above apply a reduced 100
      * to get a real differential but as this value is a negative number, apply as last operation a multiply to -1
      *
-     * @param averageValue of Flux <Bitcoin>
-     * @param maxValue of Flux <Bitcoin>
+     * @param averageValue of List <Bitcoin>
+     * @param maxValue of List <Bitcoin>
      * @return percentage differential value
      */
     public Double getDifferentialValue(Double averageValue, Double maxValue){
         return ((averageValue * 100 / maxValue) - 100) * -1;
-    }
-
-    /**
-     * Get Publisher Double given a Flux<Bitcoin>
-     *
-     * @param bitcoinFlux to get Publisher
-     * @return publisher Double
-     */
-    protected Publisher<Double> getPublisherByFlux(Flux<Bitcoin> bitcoinFlux){
-        return bitcoinFlux.flatMap(bitcoin -> Mono.just(bitcoin.getLprice()));
     }
 }

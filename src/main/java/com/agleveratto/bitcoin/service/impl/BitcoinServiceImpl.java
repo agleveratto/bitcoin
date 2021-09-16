@@ -8,6 +8,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Implementation of {@link BitcoinService}
@@ -39,5 +40,19 @@ public class BitcoinServiceImpl implements BitcoinService {
             throw new ResourceNotFoundException("Price bitcoin not found for date: " + createdAt);
         }
         return bitcoin;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Bitcoin> retrieveListBitcoinFromDates(LocalDateTime sinceDate, LocalDateTime untilDate) throws ResourceNotFoundException {
+        /* call repository method to get a bitcoin by createdAt */
+        List<Bitcoin> bitcoinList = bitcoinRepository.findByCreatedAtGreaterThanEqualAndCreatedAtLessThanEqual(sinceDate, untilDate);
+        /* if bitcoin not found, throw exception */
+        if (bitcoinList == null || bitcoinList.isEmpty()) {
+            throw new ResourceNotFoundException("Price bitcoin not found between: " + sinceDate + " and " + untilDate);
+        }
+        return bitcoinList;
     }
 }
