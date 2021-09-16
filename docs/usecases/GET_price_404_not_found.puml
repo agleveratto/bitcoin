@@ -1,0 +1,27 @@
+@startuml GET_price_404_not_found
+autonumber
+
+actor Client
+
+box Bitcoin API
+    participant BitcoinController
+    participant BitcoinService
+    participant BitcoinRepository
+    database bitcoindb
+end box
+
+Client -> BitcoinController: GET /v1/api/bitcoin/priceByDate?createdAt={createdAt}
+activate BitcoinController
+    BitcoinController -> BitcoinService: retrieveBitcoinByDate(LocalDateTime createdAt)
+    activate BitcoinService
+        BitcoinService -> BitcoinRepository: findByCreatedAt(LocalDateTime applicationDate)
+        activate BitcoinRepository
+            BitcoinRepository -> bitcoindb: SELECT ...
+                activate bitcoindb
+                return results
+alt empty result
+        return empty result
+    return throw no result found
+return ErrorResult(statusCode: 404)
+end
+@enduml

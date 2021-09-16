@@ -1,0 +1,28 @@
+@startuml GET_average_and_differential_values_404_not_found
+autonumber
+
+actor Client
+
+box Bitcoin API
+    participant BitcoinController
+    participant BitcoinService
+    participant BitcoinRepository
+    participant BitcoinUtils
+    database bitcoinDB
+end box
+
+Client -> BitcoinController: GET /priceBetweenDates?sinceDate={sinceDate}&untilDate={untilDate}
+activate BitcoinController
+    BitcoinController -> BitcoinService: retrieveListBitcoinFromDates(sinceDate, untilDate)
+    activate BitcoinService
+        BitcoinService -> BitcoinRepository: findByCreatedAtGreaterThanEqualAndCreatedAtLessThanEqual(sinceDate, untilDate)
+        activate BitcoinRepository
+            BitcoinRepository -> bitcoinDB: SELECT ...
+                activate bitcoinDB
+                return results
+alt empty result
+        return empty result
+    return throw no result found
+return ErrorResult(statusCode: 404)
+end
+@enduml

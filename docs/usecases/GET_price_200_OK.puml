@@ -1,0 +1,25 @@
+@startuml GET_price_200_ok
+autonumber
+
+actor Client
+
+box Bitcoin API
+    participant BitcoinController
+    participant BitcoinService
+    participant BitcoinRepository
+    database bitcoinDB
+end box
+
+Client -> BitcoinController: GET /v1/api/bitcoin/priceByDate?createdAt={createdAt}
+activate BitcoinController
+    BitcoinController -> BitcoinService: retrieveBitcoinByDate(LocalDateTime createdAt)
+    activate BitcoinService
+        BitcoinService -> BitcoinRepository: findByCreatedAt(LocalDateTime applicationDate)
+        activate BitcoinRepository
+            BitcoinRepository -> bitcoinDB: SELECT ...
+                activate bitcoinDB
+                return results
+            return Bitcoin
+        return Bitcoin
+    return Bitcoin::getLprice()
+@enduml

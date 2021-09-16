@@ -1,0 +1,13 @@
+@startuml components-diagram
+
+interface "GET /priceByDate?createdAt={createdAt}" as BitcoinInterface
+
+frame bitcoin-api {
+    node read <<web scope>> {
+        component "bitcoin-api: read" <<application>> as BitcoinApp
+        database "db" <<H2>> as bitcoinDB
+    }
+    BitcoinInterface --> BitcoinApp
+    BitcoinApp --> bitcoinDB
+}
+@enduml

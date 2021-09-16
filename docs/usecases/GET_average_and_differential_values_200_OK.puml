@@ -1,0 +1,35 @@
+@startuml GET_average_and_differential_values_200_ok
+autonumber
+
+actor Client
+
+box Bitcoin API
+    participant BitcoinController
+    participant BitcoinService
+    participant BitcoinRepository
+    participant BitcoinUtils
+    database bitcoinDB
+end box
+
+Client -> BitcoinController: GET /priceBetweenDates?sinceDate={sinceDate}&untilDate={untilDate}
+activate BitcoinController
+    BitcoinController -> BitcoinService: retrieveListBitcoinFromDates(sinceDate, untilDate)
+    activate BitcoinService
+        BitcoinService -> BitcoinRepository: findByCreatedAtGreaterThanEqualAndCreatedAtLessThanEqual(sinceDate, untilDate)
+        activate BitcoinRepository
+            BitcoinRepository -> bitcoinDB: SELECT ...
+                activate bitcoinDB
+                return results
+            return List<Bitcoin>
+        return List<Bitcoin>
+    BitcoinController -> BitcoinUtils: getAverageValue(List<Bitcoin>)
+    activate BitcoinUtils
+        return averageValue
+    BitcoinController -> BitcoinUtils: getMaxValue(List<Bitcoin>
+    activate BitcoinUtils
+        return maxValue
+    BitcoinController -> BitcoinUtils: getDifferentialValue(Double, Double)
+    activate BitcoinUtils
+        return differentialValue
+    return Response
+@enduml
