@@ -1,6 +1,7 @@
 package com.agleveratto.bitcoin.service;
 
 import com.agleveratto.bitcoin.entities.Bitcoin;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 
@@ -15,5 +16,5 @@ public interface BitcoinService {
      * @param createdAt date to find
      * @return a bitcoin
      */
-    Bitcoin retrieveBitcoinByDate(LocalDateTime createdAt);
+    Bitcoin retrieveBitcoinByDate(LocalDateTime createdAt) throws ResourceNotFoundException;
 }
