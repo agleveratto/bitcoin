@@ -34,9 +34,6 @@ public class BitcoinControllerTest {
     @MockBean
     BitcoinController bitcoinController;
 
-    @MockBean
-    BitcoinServiceImpl bitcoinService;
-
     static Bitcoin bitcoin;
     static LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
