@@ -3,7 +3,6 @@ package com.agleveratto.bitcoin.scheduled;
 import com.agleveratto.bitcoin.BitcoinSpringWebApplication;
 import org.awaitility.Duration;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -18,14 +17,14 @@ public class BitcoinScheduleTest {
     BitcoinSchedule bitcoinSchedule;
 
     @Test
-    public void whenWaitTenSeconds_thenScheduledIsCalledAtLeastOneTime(){
-        await().atMost(Duration.TEN_SECONDS)
+    public void whenWaitOneMinute_thenScheduledIsCalledAtLeastSixTimes(){
+        await().atMost(Duration.ONE_MINUTE)
                 .untilAsserted(() -> verify(bitcoinSchedule, atLeast(1)).getBitcoinPrice());
     }
 
     @Test
-    public void whenWaitOneMinute_thenScheduledIsCalledAtLeastSixTimes(){
-        await().atMost(Duration.ONE_MINUTE)
-                .untilAsserted(() -> verify(bitcoinSchedule, atLeast(6)).getBitcoinPrice());
+    public void whenWaitTwoMinutes_thenScheduledIsCalledAtLeastOneTime(){
+        await().atMost(Duration.TWO_MINUTES)
+                .untilAsserted(() -> verify(bitcoinSchedule, atLeast(7)).getBitcoinPrice());
     }
 }
